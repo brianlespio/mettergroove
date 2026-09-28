@@ -135,26 +135,26 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   return (
     <div
       id="settings-modal-backdrop"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
         id="settings-modal-card"
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0d0f17] border border-white/15 rounded-xl shadow-2xl p-5 text-neutral-200 font-sans select-none"
+        className="w-full max-w-2xl max-h-[92dvh] overflow-y-auto overscroll-contain bg-[#0d0f17] border border-white/15 rounded-t-2xl sm:rounded-xl shadow-2xl p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-5 text-neutral-200 font-sans select-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-white/10">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2 pb-3 border-b border-white/10">
+          <div className="flex items-center gap-2 min-w-0">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-            <h2 className="text-sm font-semibold tracking-wide text-white uppercase font-mono">
+            <h2 className="text-sm font-semibold tracking-wide text-white uppercase font-mono truncate">
               Configuración del Visualizador
             </h2>
           </div>
           <button
             id="btn-close-settings"
             onClick={onClose}
-            className="p-1 rounded-md text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="min-h-11 min-w-11 flex items-center justify-center rounded-md text-neutral-400 hover:text-white hover:bg-white/10 transition-colors touch-manipulation"
             title="Cerrar configuración"
           >
             <X className="w-4 h-4" />

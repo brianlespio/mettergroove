@@ -394,8 +394,8 @@ export default function App() {
       id="app-root"
       className={
         family === 'analyzer'
-          ? 'w-screen h-screen overflow-hidden bg-[#06080c] flex items-center justify-center p-2 sm:p-4 select-none'
-          : 'w-screen h-screen overflow-hidden bg-black select-none'
+          ? 'w-full h-dvh overflow-hidden bg-[#06080c] flex items-center justify-center p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:p-4 select-none'
+          : 'w-full h-dvh overflow-hidden bg-black select-none'
       }
     >
       {family === 'analyzer' ? (

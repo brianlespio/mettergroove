@@ -18,6 +18,7 @@ import {
   Settings,
   GripHorizontal
 } from 'lucide-react';
+import { useCoarsePointer } from '../ui/useCoarsePointer';
 
 interface AudioVisualizerBarProps {
   engine: AudioEngine;
@@ -53,6 +54,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
   setConfig,
   className = '',
 }) => {
+  const coarse = useCoarsePointer();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const analyzerRef = useRef<AnalyzerEngine | null>(null);
@@ -244,7 +246,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
       {/* Top Resize Handle */}
       <div
         id="handle-top-edge"
-        className="absolute -top-2 left-3 right-3 h-4 cursor-ns-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
+        className="absolute -top-2 left-3 right-3 h-4 cursor-ns-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity max-sm:hidden [@media(pointer:coarse)]:hidden"
         onMouseDown={(e) => {
           e.preventDefault();
           setIsResizingTop(true);
@@ -257,7 +259,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
       {/* Bottom Resize Handle */}
       <div
         id="handle-bottom-edge"
-        className="absolute -bottom-2 left-3 right-3 h-4 cursor-ns-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
+        className="absolute -bottom-2 left-3 right-3 h-4 cursor-ns-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity max-sm:hidden [@media(pointer:coarse)]:hidden"
         onMouseDown={(e) => {
           e.preventDefault();
           setIsResizingBottom(true);
@@ -272,7 +274,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
       {/* Left Resize Handle */}
       <div
         id="handle-left-edge"
-        className="absolute top-2 bottom-2 -left-2 w-4 cursor-ew-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
+        className="absolute top-2 bottom-2 -left-2 w-4 cursor-ew-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity max-sm:hidden [@media(pointer:coarse)]:hidden"
         onMouseDown={(e) => {
           e.preventDefault();
           setIsResizingLeft(true);
@@ -285,7 +287,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
       {/* Right Resize Handle */}
       <div
         id="handle-right-edge"
-        className="absolute top-2 bottom-2 -right-2 w-4 cursor-ew-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
+        className="absolute top-2 bottom-2 -right-2 w-4 cursor-ew-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity max-sm:hidden [@media(pointer:coarse)]:hidden"
         onMouseDown={(e) => {
           e.preventDefault();
           setIsResizingRight(true);
@@ -298,7 +300,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
       {/* Bottom-Right Corner Resize Handle */}
       <div
         id="handle-bottom-right-corner"
-        className="absolute -bottom-2 -right-2 w-5 h-5 cursor-nwse-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
+        className="absolute -bottom-2 -right-2 w-5 h-5 cursor-nwse-resize z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity max-sm:hidden [@media(pointer:coarse)]:hidden"
         onMouseDown={(e) => {
           e.preventDefault();
           setIsResizingCorner(true);
@@ -328,7 +330,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
           onClick={onPlayDemo}
           className="absolute inset-0 flex items-center justify-center pointer-events-auto cursor-pointer"
         >
-          <div className="px-3 py-1.5 rounded-full bg-black/60 border border-white/10 text-neutral-300 text-xs font-mono backdrop-blur-sm hover:border-cyan-400/50 hover:text-white transition-all flex items-center gap-2 shadow-lg">
+          <div className="max-w-[16rem] px-3 py-1.5 rounded-full bg-black/60 border border-white/10 text-neutral-300 text-xs font-mono backdrop-blur-sm flex items-center justify-center gap-2 text-center shadow-lg">
             <Play className="w-3.5 h-3.5 text-cyan-400 fill-current animate-pulse" />
             <span>Haz clic para reproducir demo estéreo</span>
           </div>
@@ -338,8 +340,8 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
       {/* Floating Minimal Control Bar (appears on hover) */}
       <div
         id="visualizer-floating-toolbar"
-        className={`absolute top-2 right-2 flex items-center gap-1 px-1.5 py-1 rounded-md bg-neutral-950 border border-cyan-400/50 shadow-xl transition-opacity duration-150 z-20 ${
-          showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`absolute top-2 right-2 left-2 sm:left-auto flex flex-wrap items-center justify-end gap-1 px-1.5 py-1 rounded-md bg-neutral-950 border border-cyan-400/50 shadow-xl transition-opacity duration-150 z-20 ${
+          showControls || coarse ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
         {/* Play/Stop Quick Toggle */}
@@ -350,11 +352,11 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
               e.stopPropagation();
               onPlayDemo();
             }}
-            className="flex items-center gap-1 px-2 py-1 text-xs font-mono font-medium text-cyan-300 hover:text-white bg-cyan-500/20 hover:bg-cyan-500/30 rounded border border-cyan-500/40 transition-colors"
+            className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 gap-1 px-2 py-1 text-xs font-mono font-medium text-cyan-300 hover:text-white bg-cyan-500/20 hover:bg-cyan-500/30 rounded border border-cyan-500/40 transition-colors touch-manipulation"
             title="Reproducir Groove Demo"
           >
             <Play className="w-3 h-3 fill-current" />
-            <span>Play</span>
+            <span className="max-sm:sr-only">Play</span>
           </button>
         ) : (
           <button
@@ -363,11 +365,11 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
               e.stopPropagation();
               onStopAudio();
             }}
-            className="flex items-center gap-1 px-2 py-1 text-xs font-mono font-medium text-red-300 hover:text-white bg-red-500/20 hover:bg-red-500/30 rounded border border-red-500/40 transition-colors"
+            className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 gap-1 px-2 py-1 text-xs font-mono font-medium text-red-300 hover:text-white bg-red-500/20 hover:bg-red-500/30 rounded border border-red-500/40 transition-colors touch-manipulation"
             title="Detener Audio"
           >
             <Square className="w-3 h-3 fill-current" />
-            <span>Stop</span>
+            <span className="max-sm:sr-only">Stop</span>
           </button>
         )}
 
@@ -375,7 +377,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
         <button
           id="bar-btn-mode"
           onClick={cycleMode}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-mono text-neutral-200 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-colors"
+          className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 gap-1 px-2 py-1 text-xs font-mono text-neutral-200 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-colors touch-manipulation"
           title={`Modo: ${config.mode === 'combined' ? 'TODOS' : config.mode === 'levels' ? 'dB' : config.mode.toUpperCase()} (Click para alternar)`}
         >
           {config.mode === 'combined' && <Layers className="w-3 h-3 text-cyan-400" />}
@@ -390,7 +392,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
         <button
           id="bar-btn-color"
           onClick={cycleColorScheme}
-          className="flex items-center justify-center min-w-8 min-h-8 p-1.5 text-cyan-100 bg-white/10 hover:bg-cyan-500/30 rounded border border-white/30 transition-colors"
+          className="flex items-center justify-center min-w-11 min-h-11 sm:min-w-8 sm:min-h-8 p-1.5 text-cyan-100 bg-white/10 hover:bg-cyan-500/30 rounded border border-white/30 transition-colors touch-manipulation"
           title={`Color: ${currentColor.name}`}
         >
           <Palette className="w-3.5 h-3.5" />
@@ -403,7 +405,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
             e.stopPropagation();
             handleSetHeight(height <= 130 ? 220 : 115);
           }}
-          className="flex items-center justify-center min-w-8 min-h-8 p-1.5 text-cyan-100 bg-white/10 hover:bg-cyan-500/30 rounded border border-white/30 transition-colors"
+          className="flex items-center justify-center min-w-11 min-h-11 sm:min-w-8 sm:min-h-8 p-1.5 text-cyan-100 bg-white/10 hover:bg-cyan-500/30 rounded border border-white/30 transition-colors touch-manipulation"
           title={height <= 130 ? 'Expandir vista vertical' : 'Vista compacta (~3 cm)'}
         >
           <UnfoldVertical className="w-3.5 h-3.5" />
@@ -416,7 +418,7 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
               e.stopPropagation();
               onToggleFullscreen();
             }}
-            className="flex items-center justify-center min-w-8 min-h-8 p-1.5 text-cyan-100 bg-white/10 hover:bg-cyan-500/30 rounded border border-white/30 transition-colors"
+            className="flex items-center justify-center min-w-11 min-h-11 sm:min-w-8 sm:min-h-8 p-1.5 text-cyan-100 bg-white/10 hover:bg-cyan-500/30 rounded border border-white/30 transition-colors touch-manipulation"
             title={fullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
           >
             {fullscreen ? <Minimize2 className="w-3.5 h-3.5 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />}
@@ -430,11 +432,11 @@ export const AudioVisualizerBar: React.FC<AudioVisualizerBarProps> = ({
             e.stopPropagation();
             onOpenSettings();
           }}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-mono text-cyan-100 hover:text-white bg-cyan-500/25 hover:bg-cyan-500/40 rounded border border-cyan-300/60 transition-colors"
+          className="flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 gap-1 px-2 py-1 text-xs font-mono text-cyan-100 hover:text-white bg-cyan-500/25 hover:bg-cyan-500/40 rounded border border-cyan-300/60 transition-colors touch-manipulation"
           title="Abrir Configuración de Audio y Visualizador"
         >
           <Settings className="w-3.5 h-3.5 text-cyan-200" />
-          <span>Ajustes</span>
+          <span className="max-sm:sr-only">Ajustes</span>
         </button>
       </div>
 

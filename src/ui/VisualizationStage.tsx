@@ -20,6 +20,7 @@ import { MilkDropEngine, readMilkdropFile } from '../visualization/milkdrop/Milk
 import { TrackTextEngine } from '../visualization/track/TrackTextEngine';
 import type { TrackBlendMode, TrackTextStyle } from '../traktor/types';
 import type { VisualizationFamily } from '../visualization/types';
+import { useCoarsePointer } from './useCoarsePointer';
 
 interface VisualizationStageProps {
   family: Exclude<VisualizationFamily, 'analyzer'>;
@@ -265,16 +266,22 @@ export const VisualizationStage: React.FC<VisualizationStageProps> = ({
     };
   }, [family, milkdropId, manager, onMilkdropId, engineEpoch]);
 
+  const coarse = useCoarsePointer();
   const reveal = () => {
     setControls(true);
     window.clearTimeout(hideTimer.current);
+    if (coarse) return;
     hideTimer.current = window.setTimeout(() => setControls(false), fullscreen ? 1800 : 2600);
   };
 
   useEffect(() => {
+    if (coarse) {
+      setControls(true);
+      return;
+    }
     hideTimer.current = window.setTimeout(() => setControls(false), 2600);
     return () => window.clearTimeout(hideTimer.current);
-  }, []);
+  }, [coarse]);
 
   return (
     <div
@@ -282,20 +289,21 @@ export const VisualizationStage: React.FC<VisualizationStageProps> = ({
       id="visualization-stage"
       className="relative w-full h-full bg-black overflow-hidden"
       onMouseMove={reveal}
+      onPointerDown={reveal}
     >
       <canvas key={family} ref={canvasRef} id="visualization-canvas" className="absolute inset-0 w-full h-full block" />
       <canvas ref={trackCanvasRef} id="track-text-canvas" className="absolute inset-0 w-full h-full block pointer-events-none z-10" />
       <div
-        className={`absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-3 p-3 transition-opacity duration-200 ${
+        className={`absolute inset-x-0 bottom-0 z-20 flex flex-col gap-2 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-end sm:justify-between sm:gap-3 sm:p-3 transition-opacity duration-200 ${
           controls ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
-        <div className="min-w-0 px-3 py-2 rounded-md bg-neutral-950/80 border border-white/10 backdrop-blur-md text-xs font-mono text-neutral-200">
+        <div className="min-w-0 max-w-full px-3 py-2 rounded-md bg-neutral-950/80 border border-white/10 backdrop-blur-md text-xs font-mono text-neutral-200">
           <div className="truncate">{message || (family === 'generative' ? generated.name : 'Audio rítmico')}</div>
           {trackCaption && <div className="truncate text-white">{trackCaption}</div>}
           {family === 'generative' && <div className="text-cyan-300">Seed {generated.seed}</div>}
         </div>
-        <div className="flex items-center gap-1 px-1.5 py-1.5 rounded-md bg-neutral-950 border border-cyan-400/50 shadow-xl">
+        <div className="flex flex-wrap items-center justify-end gap-1 px-1.5 py-1.5 rounded-md bg-neutral-950 border border-cyan-400/50 shadow-xl">
           {family === 'audio-rhythmic' && (
             <>
               <StageButton id="stage-prev" title="Anterior" onClick={onPrevious}><SkipBack className="w-4 h-4" /><span>Anterior</span></StageButton>
@@ -351,7 +359,7 @@ const StageButton: React.FC<{ id: string; title: string; onClick: () => void; ch
     type="button"
     title={title}
     onClick={onClick}
-    className="flex items-center gap-1 min-h-8 px-2.5 py-1.5 rounded-md border border-white/20 bg-white/10 text-white text-[11px] font-mono hover:bg-cyan-500/30 hover:border-cyan-300"
+    className="flex items-center justify-center gap-1 min-h-11 min-w-11 sm:min-h-8 sm:min-w-0 px-2 sm:px-2.5 py-1.5 rounded-md border border-white/20 bg-white/10 text-white text-[11px] font-mono hover:bg-cyan-500/30 hover:border-cyan-300 touch-manipulation [&>span]:max-sm:sr-only"
   >
     {children}
   </button>

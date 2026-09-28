@@ -11,6 +11,7 @@ import { AudioVisualizerBar } from './components/AudioVisualizerBar';
 import { SettingsModal } from './components/SettingsModal';
 import { LocalPresetStore } from './presets/LocalPresetStore';
 import { PresetManager } from './presets/PresetManager';
+import { publicPath } from './publicPath';
 import type { PresetCollectionId, UserPresetRecord } from './presets/types';
 import { loadPreferences, savePreferences } from './settings/persistence';
 import { listAudioInputs } from './audio/audioInputs';
@@ -147,7 +148,7 @@ export default function App() {
     const tick = async () => {
       if (stopped) return;
       try {
-        const response = await fetch('/traktor/now-playing');
+        const response = await fetch(publicPath('/traktor/now-playing'));
         if (!response.ok) throw new Error('sin puente');
         const next = await response.json() as TraktorLinkState;
         if (stopped) return;

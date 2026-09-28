@@ -7,6 +7,7 @@ import { traktorBridgePlugin } from './vite/traktorBridgePlugin';
 
 export default defineConfig(() => {
   return {
+    base: process.env.VITE_BASE || '/',
     plugins: [react(), tailwindcss(), milkdropAssetsPlugin(), traktorBridgePlugin()],
     optimizeDeps: {
       include: ['butterchurn', 'milkdrop-preset-converter'],

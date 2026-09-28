@@ -1,4 +1,4 @@
-import type { Connect, Plugin, ViteDevServer } from 'vite';
+import type { Connect, Plugin } from 'vite';
 import type { ServerResponse } from 'node:http';
 import { createTraktorBridge, type TraktorBridge } from '../bridge/traktorBridge';
 
@@ -12,8 +12,11 @@ function currentBridge(): TraktorBridge {
   return holder[SLOT];
 }
 
-function releaseWhenServerCloses(server: ViteDevServer, bridge: TraktorBridge): void {
-  server.httpServer?.once('close', () => {
+function releaseWhenServerCloses(
+  httpServer: { once(event: 'close', listener: () => void): void } | null,
+  bridge: TraktorBridge,
+): void {
+  httpServer?.once('close', () => {
     bridge.close();
     delete (globalThis as BridgeHolder)[SLOT];
   });
@@ -44,12 +47,12 @@ export function traktorBridgePlugin(): Plugin {
     name: 'traktor-bridge',
     configureServer(server) {
       const bridge = currentBridge();
-      releaseWhenServerCloses(server, bridge);
+      releaseWhenServerCloses(server.httpServer, bridge);
       attach(server.middlewares, bridge);
     },
     configurePreviewServer(server) {
       const bridge = currentBridge();
-      releaseWhenServerCloses(server, bridge);
+      releaseWhenServerCloses(server.httpServer, bridge);
       attach(server.middlewares, bridge);
     },
   };

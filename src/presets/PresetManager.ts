@@ -1,5 +1,6 @@
 import { nextPresetId, previousPresetId, randomPresetId } from '../visualization/presetIndex';
 import type { GenerativePreset } from '../visualization/generative/GenerativePreset';
+import { publicPath } from '../publicPath';
 import type { PresetStore } from './LocalPresetStore';
 import type {
   MilkdropCatalog,
@@ -181,7 +182,7 @@ export class PresetManager {
 }
 
 export async function fetchMilkdropCatalog(): Promise<MilkdropCatalog> {
-  const response = await fetch('/milkdrop/manifest.json');
+  const response = await fetch(publicPath('/milkdrop/manifest.json'));
   if (!response.ok) {
     throw new Error('No se pudo leer el índice de presets MilkDrop');
   }
@@ -195,7 +196,7 @@ export async function fetchMilkdropCatalog(): Promise<MilkdropCatalog> {
 }
 
 export function milkdropPresetUrl(relativePath: string): string {
-  return `/milkdrop/presets/${relativePath.split('/').map(encodeURIComponent).join('/')}`;
+  return publicPath(`/milkdrop/presets/${relativePath.split('/').map(encodeURIComponent).join('/')}`);
 }
 
 export function textureCandidateUrls(samplerName: string): string[] {
@@ -205,7 +206,7 @@ export function textureCandidateUrls(samplerName: string): string[] {
   const urls: string[] = [];
   for (const name of names) {
     for (const extension of extensions) {
-      urls.push(`/milkdrop/textures/${encodeURIComponent(name)}.${extension}`);
+      urls.push(publicPath(`/milkdrop/textures/${encodeURIComponent(name)}.${extension}`));
     }
   }
   return urls;
